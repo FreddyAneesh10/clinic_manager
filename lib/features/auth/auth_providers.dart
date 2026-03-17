@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/datasource/auth_local_datasource.dart';
-import '../../data/repository/auth_repository_impl.dart';
-import '../../domain/repository/auth_repository.dart';
-import '../../domain/usecase/login_usecase.dart';
-import '../presenter/auth_presenter.dart';
+import './data/datasource/auth_local_datasource.dart';
+import './data/repository/auth_repository_impl.dart';
+import './domain/repository/auth_repository.dart';
+import './domain/usecase/login_usecase.dart';
+import './presentation/presenter/auth_presenter.dart';
 
 // DataSource
 final authLocalDataSourceProvider = Provider<AuthLocalDataSource>((ref) {

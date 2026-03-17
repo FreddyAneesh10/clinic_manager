@@ -8,7 +8,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_layout.dart';
 import '../../../../core/widgets/app_sidebar.dart';
 import '../../../../core/widgets/custom_text_field.dart';
-import '../providers/doctor_providers.dart';
+import '../../doctor_providers.dart';
 import '../router/doctor_router.dart';
 import '../../../auth/presentation/router/auth_router.dart';
 

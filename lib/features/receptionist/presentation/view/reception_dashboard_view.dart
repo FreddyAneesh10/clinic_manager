@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_layout.dart';
 import '../../../../core/widgets/app_sidebar.dart';
-import '../providers/receptionist_providers.dart';
+import '../../receptionist_providers.dart';
 import '../router/receptionist_router.dart';
 import '../../../auth/presentation/router/auth_router.dart';
 

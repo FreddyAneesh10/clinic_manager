@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_layout.dart';
 import '../../../../core/widgets/app_sidebar.dart';
-import '../providers/doctor_providers.dart';
+import '../../doctor_providers.dart';
 import '../router/doctor_router.dart';
 import '../../../auth/presentation/router/auth_router.dart';
 

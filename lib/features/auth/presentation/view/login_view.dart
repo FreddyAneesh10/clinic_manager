@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/custom_text_field.dart';
-import '../providers/auth_providers.dart';
+import '../../auth_providers.dart';
 import '../../../doctor/presentation/router/doctor_router.dart';
 import '../../../receptionist/presentation/router/receptionist_router.dart';
 
