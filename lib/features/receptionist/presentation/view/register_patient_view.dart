@@ -7,8 +7,10 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_layout.dart';
 import '../../../../core/widgets/app_sidebar.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/responsive.dart';
 import '../../receptionist_providers.dart';
 import '../router/receptionist_router.dart';
+import '../../../appointment/presentation/router/appointment_router.dart';
 import '../../../auth/presentation/router/auth_router.dart';
 
 class RegisterPatientView extends ConsumerStatefulWidget {
@@ -70,7 +72,7 @@ class _RegisterPatientViewState extends ConsumerState<RegisterPatientView> {
       onLogout: () => context.go(AuthRouter.login),
       sidebarItems: const [
         SidebarItem(label: 'Dashboard', icon: Icons.dashboard, route: ReceptionistRouter.dashboard),
-        SidebarItem(label: 'Add Appointment', icon: Icons.calendar_today, route: '${ReceptionistRouter.dashboard}/${ReceptionistRouter.addAppointment}'),
+        SidebarItem(label: 'Add Appointment', icon: Icons.calendar_today, route: AppointmentRouter.addAppointment),
         SidebarItem(label: 'Register Patient', icon: Icons.person_add, route: '${ReceptionistRouter.dashboard}/${ReceptionistRouter.registerPatient}'),
       ],
       child: SingleChildScrollView(
@@ -113,14 +115,17 @@ class _RegisterPatientViewState extends ConsumerState<RegisterPatientView> {
                     const SizedBox(height: 32),
                     
                     // Save Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        onPressed: state.isLoading ? null : _save,
-                        child: state.isLoading
-                            ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                            : const Text('Register Patient'),
+                    Align(
+                      alignment: Responsive.isMobile(context) ? Alignment.center : Alignment.centerRight,
+                      child: SizedBox(
+                        width: Responsive.isMobile(context) ? double.infinity : 200,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: state.isLoading ? null : _save,
+                          child: state.isLoading
+                              ? const Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)))
+                              : const Text('Register Patient'),
+                        ),
                       ),
                     ),
                   ],

@@ -5,8 +5,11 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_layout.dart';
 import '../../../../core/widgets/app_sidebar.dart';
+import '../../../../core/widgets/responsive.dart';
 import '../../receptionist_providers.dart';
+import '../../../appointment/appointment_providers.dart';
 import '../router/receptionist_router.dart';
+import '../../../appointment/presentation/router/appointment_router.dart';
 import '../../../auth/presentation/router/auth_router.dart';
 
 class ReceptionDashboardView extends ConsumerStatefulWidget {
@@ -21,12 +24,16 @@ class _ReceptionDashboardViewState extends ConsumerState<ReceptionDashboardView>
   void initState() {
     super.initState();
     // Refresh data when screen loads
-    Future.microtask(() => ref.read(receptionistProvider.notifier).loadDashboardData());
+    Future.microtask(() {
+      ref.read(receptionistProvider.notifier).loadPatients();
+      ref.read(appointmentProvider.notifier).loadAppointments();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(receptionistProvider);
+    final appointmentState = ref.watch(appointmentProvider);
 
     return AppLayout(
       currentRoute: ReceptionistRouter.dashboard,
@@ -36,11 +43,11 @@ class _ReceptionDashboardViewState extends ConsumerState<ReceptionDashboardView>
       onLogout: () => context.go(AuthRouter.login),
       sidebarItems: const [
         SidebarItem(label: 'Dashboard', icon: Icons.dashboard, route: ReceptionistRouter.dashboard),
-        SidebarItem(label: 'Add Appointment', icon: Icons.calendar_today, route: '${ReceptionistRouter.dashboard}/${ReceptionistRouter.addAppointment}'),
+        SidebarItem(label: 'Add Appointment', icon: Icons.calendar_today, route: AppointmentRouter.addAppointment),
       ],
       actions: [
         ElevatedButton.icon(
-        onPressed: () => context.go('${ReceptionistRouter.dashboard}/${ReceptionistRouter.addAppointment}'),
+        onPressed: () => context.go(AppointmentRouter.addAppointment),
         icon: const Icon(Icons.add, size: 18),
         label: const Text('Add Appointment'),
           style: ElevatedButton.styleFrom(
@@ -48,41 +55,41 @@ class _ReceptionDashboardViewState extends ConsumerState<ReceptionDashboardView>
           ),
         ),
       ],
-      child: state.isLoading && state.appointments.isEmpty
+      child: (state.isLoading || appointmentState.isLoading) && appointmentState.appointments.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
-              onRefresh: () => ref.read(receptionistProvider.notifier).loadDashboardData(),
+              onRefresh: () async {
+                await ref.read(receptionistProvider.notifier).loadPatients();
+                await ref.read(appointmentProvider.notifier).loadAppointments();
+              },
               child: ListView(
                 padding: const EdgeInsets.all(24),
                 children: [
                   // KPI Cards
-                  Row(
+                  Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
                     children: [
-                      Expanded(
-                        child: _StatCard(
-                          title: 'Total Patients',
-                          value: state.patients.length.toString(),
-                          icon: Icons.people,
-                          color: AppColors.primary,
-                        ),
+                      _StatCard(
+                        title: 'Total Patients',
+                        value: state.patients.length.toString(),
+                        icon: Icons.people,
+                        color: AppColors.primary,
+                        width: Responsive.isMobile(context) ? double.infinity : (MediaQuery.of(context).size.width - 48 - 32) / 3,
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _StatCard(
-                          title: "Today's Appointments",
-                          value: state.appointments.length.toString(),
-                          icon: Icons.event,
-                          color: AppColors.waiting,
-                        ),
+                      _StatCard(
+                        title: "Today's Appointments",
+                        value: appointmentState.appointments.length.toString(),
+                        icon: Icons.event,
+                        color: AppColors.waiting,
+                        width: Responsive.isMobile(context) ? double.infinity : (MediaQuery.of(context).size.width - 48 - 32) / 3,
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _StatCard(
-                          title: 'Completed',
-                          value: state.appointments.where((a) => a.status == 'completed').length.toString(),
-                          icon: Icons.check_circle,
-                          color: AppColors.completed,
-                        ),
+                      _StatCard(
+                        title: 'Completed',
+                        value: appointmentState.appointments.where((a) => a.status == 'completed').length.toString(),
+                        icon: Icons.check_circle,
+                        color: AppColors.completed,
+                        width: Responsive.isMobile(context) ? double.infinity : (MediaQuery.of(context).size.width - 48 - 32) / 3,
                       ),
                     ],
                   ),
@@ -102,7 +109,7 @@ class _ReceptionDashboardViewState extends ConsumerState<ReceptionDashboardView>
                           ),
                         ),
                         const Divider(height: 1),
-                        if (state.appointments.isEmpty)
+                        if (appointmentState.appointments.isEmpty)
                           const Padding(
                             padding: EdgeInsets.all(40),
                             child: Center(
@@ -123,14 +130,14 @@ class _ReceptionDashboardViewState extends ConsumerState<ReceptionDashboardView>
                                     headingRowColor: WidgetStateProperty.all(AppColors.background),
                                     columnSpacing: 24,
                                     horizontalMargin: 20,
-                                    columns: const [
-                                      DataColumn(label: Text('Patient')),
-                                      DataColumn(label: Text('Phone')),
-                                      DataColumn(label: Text('Time')),
-                                      DataColumn(label: Text('Reason')),
-                                      DataColumn(label: Text('Status')),
+                                    columns: [
+                                      const DataColumn(label: Text('Patient')),
+                                      if (!Responsive.isMobile(context)) const DataColumn(label: Text('Phone')),
+                                      const DataColumn(label: Text('Time')),
+                                      if (Responsive.isDesktop(context)) const DataColumn(label: Text('Reason')),
+                                      const DataColumn(label: Text('Status')),
                                     ],
-                                    rows: state.appointments.map((appointment) {
+                                    rows: appointmentState.appointments.map((appointment) {
                                       return DataRow(
                                         cells: [
                                           DataCell(
@@ -149,9 +156,9 @@ class _ReceptionDashboardViewState extends ConsumerState<ReceptionDashboardView>
                                               ],
                                             ),
                                           ),
-                                          DataCell(Text(appointment.phone, style: const TextStyle(color: AppColors.textSecondary))),
+                                          if (!Responsive.isMobile(context)) DataCell(Text(appointment.phone, style: const TextStyle(color: AppColors.textSecondary))),
                                           DataCell(Text(appointment.time, style: const TextStyle(fontWeight: FontWeight.w500))),
-                                          DataCell(Text(appointment.reason, style: const TextStyle(color: AppColors.textSecondary))),
+                                          if (Responsive.isDesktop(context)) DataCell(Text(appointment.reason, style: const TextStyle(color: AppColors.textSecondary))),
                                           DataCell(StatusBadge(status: appointment.status)),
                                         ],
                                       );
@@ -176,45 +183,50 @@ class _StatCard extends StatelessWidget {
   final String value;
   final IconData icon;
   final Color color;
+  final double? width;
 
   const _StatCard({
     required this.title,
     required this.value,
     required this.icon,
     required this.color,
+    this.width,
   });
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
+    return SizedBox(
+      width: width,
+      child: AppCard(
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 24),
             ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-                ),
-              ],
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

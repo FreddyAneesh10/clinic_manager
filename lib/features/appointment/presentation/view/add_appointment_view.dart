@@ -9,8 +9,10 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_layout.dart';
 import '../../../../core/widgets/app_sidebar.dart';
 import '../../../../core/widgets/custom_text_field.dart';
-import '../../receptionist_providers.dart';
-import '../router/receptionist_router.dart';
+import '../../../../core/widgets/responsive.dart';
+import '../../appointment_providers.dart';
+import '../router/appointment_router.dart';
+import '../../../receptionist/presentation/router/receptionist_router.dart';
 import '../../../auth/presentation/router/auth_router.dart';
 
 class AddAppointmentView extends ConsumerStatefulWidget {
@@ -32,7 +34,7 @@ class _AddAppointmentViewState extends ConsumerState<AddAppointmentView> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(receptionistProvider.notifier).loadDashboardData());
+    Future.microtask(() => ref.read(appointmentProvider.notifier).loadAppointments());
   }
 
   @override
@@ -97,7 +99,7 @@ class _AddAppointmentViewState extends ConsumerState<AddAppointmentView> {
       reason: _reasonController.text.trim(),
     );
 
-    final success = await ref.read(receptionistProvider.notifier).addAppointment(appointment);
+    final success = await ref.read(appointmentProvider.notifier).addAppointment(appointment);
 
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -109,26 +111,26 @@ class _AddAppointmentViewState extends ConsumerState<AddAppointmentView> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(receptionistProvider);
+    final state = ref.watch(appointmentProvider);
 
-    ref.listen(receptionistProvider, (previous, next) {
+    ref.listen(appointmentProvider, (previous, next) {
       if (next.error != null && next.error != previous?.error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(next.error!), backgroundColor: AppColors.error),
         );
-        ref.read(receptionistProvider.notifier).clearError();
+        ref.read(appointmentProvider.notifier).clearError();
       }
     });
 
     return AppLayout(
-      currentRoute: '${ReceptionistRouter.dashboard}/${ReceptionistRouter.addAppointment}',
+      currentRoute: AppointmentRouter.addAppointment,
       pageTitle: 'Add Appointment',
       title: 'Mini Clinic',
       subtitle: 'Receptionist',
       onLogout: () => context.go(AuthRouter.login),
       sidebarItems: const [
         SidebarItem(label: 'Dashboard', icon: Icons.dashboard, route: ReceptionistRouter.dashboard),
-        SidebarItem(label: 'Add Appointment', icon: Icons.calendar_today, route: '${ReceptionistRouter.dashboard}/${ReceptionistRouter.addAppointment}'),
+        SidebarItem(label: 'Add Appointment', icon: Icons.calendar_today, route: AppointmentRouter.addAppointment),
       ],
       child: state.isLoading && _nameController.text.isEmpty
           ? const Center(child: CircularProgressIndicator())
@@ -174,10 +176,13 @@ class _AddAppointmentViewState extends ConsumerState<AddAppointmentView> {
                           ),
                           const SizedBox(height: 24),
 
-                          Row(
+                          Flex(
+                            direction: Responsive.isMobile(context) ? Axis.vertical : Axis.horizontal,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Date Selection
                               Expanded(
+                                flex: Responsive.isMobile(context) ? 0 : 1,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -202,10 +207,11 @@ class _AddAppointmentViewState extends ConsumerState<AddAppointmentView> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 16),
+                              if (!Responsive.isMobile(context)) const SizedBox(width: 16) else const SizedBox(height: 24),
                               
                               // Time Selection
                               Expanded(
+                                flex: Responsive.isMobile(context) ? 0 : 1,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -248,9 +254,9 @@ class _AddAppointmentViewState extends ConsumerState<AddAppointmentView> {
 
                           // Save
                           Align(
-                            alignment: Alignment.centerRight,
+                            alignment: Responsive.isMobile(context) ? Alignment.center : Alignment.centerRight,
                             child: SizedBox(
-                              width: 200,
+                              width: Responsive.isMobile(context) ? double.infinity : 200,
                               height: 48,
                               child: ElevatedButton(
                                 onPressed: state.isLoading ? null : _save,

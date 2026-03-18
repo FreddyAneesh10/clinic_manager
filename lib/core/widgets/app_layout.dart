@@ -3,6 +3,7 @@ import '../theme/app_theme.dart';
 import 'app_sidebar.dart';
 import 'custom_app_bar.dart';
 import 'custom_icon_button.dart';
+import 'responsive.dart';
 
 class AppLayout extends StatefulWidget {
   final Widget child;
@@ -35,11 +36,7 @@ class _AppLayoutState extends State<AppLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isDesktop = screenWidth >= 900;
-    final isMobile = screenWidth < 600;
-
-    if (isMobile) {
+    if (Responsive.isMobile(context)) {
       return _MobileLayout(
         currentRoute: widget.currentRoute,
         sidebarItems: widget.sidebarItems,
@@ -51,6 +48,8 @@ class _AppLayoutState extends State<AppLayout> {
         child: widget.child,
       );
     }
+
+    final isDesktop = Responsive.isDesktop(context);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -74,12 +73,11 @@ class _AppLayoutState extends State<AppLayout> {
                   color: AppColors.surface,
                   child: Row(
                     children: [
-                      if (!isMobile)
-                        CustomIconButton(
-                          icon: _sidebarCollapsed ? Icons.menu : Icons.menu_open,
-                          color: AppColors.textSecondary,
-                          onPressed: () => setState(() => _sidebarCollapsed = !_sidebarCollapsed),
-                        ),
+                      CustomIconButton(
+                        icon: (_sidebarCollapsed || !isDesktop) ? Icons.menu : Icons.menu_open,
+                        color: AppColors.textSecondary,
+                        onPressed: () => setState(() => _sidebarCollapsed = !_sidebarCollapsed),
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         widget.pageTitle,

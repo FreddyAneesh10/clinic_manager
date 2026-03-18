@@ -1,8 +1,8 @@
 import '../../../../core/domain/entities/appointment_entity.dart';
-import '../repository/receptionist_repository.dart';
+import '../repository/appointment_repository.dart';
 
 class AddAppointmentInteractor {
-  final ReceptionistRepository _repository;
+  final AppointmentRepository _repository;
 
   AddAppointmentInteractor(this._repository);
  

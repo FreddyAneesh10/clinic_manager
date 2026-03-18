@@ -1,8 +1,8 @@
 import '../../../../core/domain/entities/patient_entity.dart';
-import '../repository/receptionist_repository.dart';
+import '../repository/patient_repository.dart';
 
 class GetAllPatientsInteractor {
-  final ReceptionistRepository _repository;
+  final PatientRepository _repository;
 
   GetAllPatientsInteractor(this._repository);
 
