@@ -1,4 +1,4 @@
-import '../../../../core/domain/entities/user_entity.dart';
+import '../entities/user_entity.dart';
 import '../repository/auth_repository.dart';
 
 class LoginUseCase {

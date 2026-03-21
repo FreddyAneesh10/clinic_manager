@@ -34,4 +34,8 @@ class AppointmentEntity extends HiveObject {
     required this.reason,
     this.status = 'waiting',
   });
+
+  bool get isCompleted => status == 'completed';
+  bool get isWaiting => status == 'waiting';
+  bool get isInConsultation => status == 'in_consultation';
 }

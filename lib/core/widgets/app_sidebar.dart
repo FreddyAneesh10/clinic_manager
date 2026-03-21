@@ -97,7 +97,7 @@ class AppSidebar extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
               children: items.map((item) {
-                final isActive = currentRoute == item.route || currentRoute.startsWith(item.route);
+                final isActive = currentRoute == item.route;
                 return _SidebarNavItem(
                   item: item,
                   isActive: isActive,
@@ -130,7 +130,7 @@ class AppSidebar extends StatelessWidget {
                     onTap: onLogout,
                     dense: true,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    hoverColor: AppColors.sidebarItem,
+                    hoverColor: Colors.transparent,
                   ),
           ),
         ],
@@ -162,7 +162,7 @@ class _SidebarNavItem extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(8),
-          hoverColor: AppColors.sidebarItem,
+          hoverColor: Colors.transparent,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Row(

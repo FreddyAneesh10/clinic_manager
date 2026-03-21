@@ -4,10 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_layout.dart';
-import '../../../../core/widgets/app_sidebar.dart';
 import '../../doctor_providers.dart';
 import '../router/doctor_router.dart';
-import '../../../auth/presentation/router/auth_router.dart';
 
 class PatientDetailsView extends ConsumerWidget {
   const PatientDetailsView({super.key});
@@ -17,25 +15,17 @@ class PatientDetailsView extends ConsumerWidget {
     final state = ref.watch(doctorProvider);
 
     if (state.selectedPatient == null || state.selectedAppointment == null) {
-      return AppLayout(
-        currentRoute: '${DoctorRouter.dashboard}/${DoctorRouter.patientDetails}',
-        pageTitle: 'Patient Details',
-        title: 'Mini Clinic',
-        subtitle: 'Doctor',
-        onLogout: () => context.go(AuthRouter.login),
-        sidebarItems: const [SidebarItem(label: 'Queue', icon: Icons.people_outline, route: DoctorRouter.dashboard)],
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('No patient selected'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => context.go(DoctorRouter.dashboard),
-                child: const Text('Back to Queue'),
-              ),
-            ],
-          ),
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('No patient selected'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => context.go(DoctorRouter.dashboard),
+              child: const Text('Back to Queue'),
+            ),
+          ],
         ),
       );
     }
@@ -45,58 +35,53 @@ class PatientDetailsView extends ConsumerWidget {
     final prescriptions = state.patientPrescriptions;
     final isCompleted = appointment.status == 'completed';
 
-    return AppLayout(
-      currentRoute: '${DoctorRouter.dashboard}/${DoctorRouter.patientDetails}',
-      pageTitle: 'Patient Case File',
-      title: 'Mini Clinic',
-      subtitle: 'Doctor',
-      onLogout: () => context.go(AuthRouter.login),
-      sidebarItems: const [
-        SidebarItem(label: 'Queue', icon: Icons.people_outline, route: DoctorRouter.dashboard),
-      ],
-      child: state.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1000),
-                  child: Column(
-                    children: [
-                      // PERSISTENT HEADER CARD
-                      _PatientHeader(patient: patient, appointment: appointment),
-                      const SizedBox(height: 24),
-                      
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // LEFT COLUMN - VISIT DETAILS
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              children: [
-                                _VisitDetailsCard(appointment: appointment, isCompleted: isCompleted),
-                                const SizedBox(height: 24),
-                                if (!isCompleted)
-                                  _ActionCard(onAddPrescription: () => context.go('${DoctorRouter.dashboard}/${DoctorRouter.addPrescription}')),
-                              ],
-                            ),
+    return state.isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1000),
+                child: Column(
+                  children: [
+                    // PERSISTENT HEADER CARD
+                    _PatientHeader(patient: patient, appointment: appointment),
+                    const SizedBox(height: 24),
+
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // LEFT COLUMN - VISIT DETAILS
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            children: [
+                              _VisitDetailsCard(
+                                  appointment: appointment,
+                                  isCompleted: isCompleted),
+                              const SizedBox(height: 24),
+                              if (!isCompleted)
+                                _ActionCard(
+                                    onAddPrescription: () => context.go(
+                                        '${DoctorRouter.dashboard}/${DoctorRouter.addPrescription}')),
+                            ],
                           ),
-                          const SizedBox(width: 24),
-                          
-                          // RIGHT COLUMN - PRESCRIPTION HISTORY
-                          Expanded(
-                            flex: 6,
-                            child: _PrescriptionHistorySection(prescriptions: prescriptions),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                        const SizedBox(width: 24),
+
+                        // RIGHT COLUMN - PRESCRIPTION HISTORY
+                        Expanded(
+                          flex: 6,
+                          child: _PrescriptionHistorySection(
+                              prescriptions: prescriptions),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
-    );
+          );
   }
 }
 

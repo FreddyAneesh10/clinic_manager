@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/app_theme.dart';
 import 'app_sidebar.dart';
 import 'custom_app_bar.dart';
 import 'custom_icon_button.dart';
 import 'responsive.dart';
+import 'layout_providers.dart';
 
-class AppLayout extends StatefulWidget {
+class AppLayout extends ConsumerWidget {
   final Widget child;
   final String currentRoute;
   final List<SidebarItem> sidebarItems;
@@ -28,24 +30,19 @@ class AppLayout extends StatefulWidget {
   });
 
   @override
-  State<AppLayout> createState() => _AppLayoutState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final sidebarCollapsed = ref.watch(sidebarCollapsedProvider);
 
-class _AppLayoutState extends State<AppLayout> {
-  bool _sidebarCollapsed = false;
-
-  @override
-  Widget build(BuildContext context) {
     if (Responsive.isMobile(context)) {
       return _MobileLayout(
-        currentRoute: widget.currentRoute,
-        sidebarItems: widget.sidebarItems,
-        title: widget.title,
-        subtitle: widget.subtitle,
-        onLogout: widget.onLogout,
-        pageTitle: widget.pageTitle,
-        actions: widget.actions,
-        child: widget.child,
+        currentRoute: currentRoute,
+        sidebarItems: sidebarItems,
+        title: title,
+        subtitle: subtitle,
+        onLogout: onLogout,
+        pageTitle: pageTitle,
+        actions: actions,
+        child: child,
       );
     }
 
@@ -56,12 +53,12 @@ class _AppLayoutState extends State<AppLayout> {
       body: Row(
         children: [
           AppSidebar(
-            currentRoute: widget.currentRoute,
-            items: widget.sidebarItems,
-            title: widget.title,
-            subtitle: widget.subtitle,
-            onLogout: widget.onLogout,
-            isCollapsed: !isDesktop || _sidebarCollapsed,
+            currentRoute: currentRoute,
+            items: sidebarItems,
+            title: title,
+            subtitle: subtitle,
+            onLogout: onLogout,
+            isCollapsed: !isDesktop || sidebarCollapsed,
           ),
           Expanded(
             child: Column(
@@ -74,13 +71,13 @@ class _AppLayoutState extends State<AppLayout> {
                   child: Row(
                     children: [
                       CustomIconButton(
-                        icon: (_sidebarCollapsed || !isDesktop) ? Icons.menu : Icons.menu_open,
+                        icon: (sidebarCollapsed || !isDesktop) ? Icons.menu : Icons.menu_open,
                         color: AppColors.textSecondary,
-                        onPressed: () => setState(() => _sidebarCollapsed = !_sidebarCollapsed),
+                        onPressed: () => ref.read(sidebarCollapsedProvider.notifier).state = !sidebarCollapsed,
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        widget.pageTitle,
+                        pageTitle,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -88,14 +85,14 @@ class _AppLayoutState extends State<AppLayout> {
                         ),
                       ),
                       const Spacer(),
-                      if (widget.actions != null) ...widget.actions!,
+                      if (actions != null) ...actions!,
                     ],
                   ),
                 ),
                 const Divider(height: 1),
                 // Content
                 Expanded(
-                  child: widget.child,
+                  child: child,
                 ),
               ],
             ),

@@ -6,7 +6,7 @@ import './domain/repository/patient_repository.dart';
 import './domain/interactor/get_all_patients_interactor.dart';
 import './domain/interactor/register_patient_interactor.dart';
 
-final patientDataSourceProvider = Provider<PatientDataSource>((ref) {
+final patientDataSourceProvider = Provider<IPatientDataSource>((ref) {
   return PatientDataSource();
 });
 

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'core/domain/entities/appointment_entity.dart';
-import 'core/domain/entities/patient_entity.dart';
-import 'core/domain/entities/prescription_entity.dart';
+import 'features/appointment/domain/entities/appointment_entity.dart';
+import 'features/patient/domain/entities/patient_entity.dart';
+import 'features/doctor/domain/entities/prescription_entity.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 

@@ -8,8 +8,10 @@ import './domain/interactor/get_appointments_interactor.dart';
 import './presentation/presenter/appointment_presenter.dart';
 import '../patient/patient_providers.dart';
 
+import './domain/interactor/schedule_appointment_interactor.dart';
+
 // DataSource
-final appointmentDataSourceProvider = Provider<AppointmentDataSource>((ref) {
+final appointmentDataSourceProvider = Provider<IAppointmentDataSource>((ref) {
   return AppointmentDataSource();
 });
 
@@ -32,12 +34,19 @@ final addAppointmentInteractorProvider =
   return AddAppointmentInteractor(repository);
 });
 
+final scheduleAppointmentInteractorProvider =
+    Provider<ScheduleAppointmentInteractor>((ref) {
+  return ScheduleAppointmentInteractor(
+    ref.watch(appointmentRepositoryProvider),
+    ref.watch(registerPatientInteractorProvider),
+  );
+});
+
 // Presenter (StateNotifierProvider)
 final appointmentProvider =
     StateNotifierProvider<AppointmentPresenter, AppointmentState>((ref) {
   return AppointmentPresenter(
     ref.watch(getAppointmentsInteractorProvider),
-    ref.watch(addAppointmentInteractorProvider),
-    ref.watch(registerPatientInteractorProvider),
+    ref.watch(scheduleAppointmentInteractorProvider),
   );
 });

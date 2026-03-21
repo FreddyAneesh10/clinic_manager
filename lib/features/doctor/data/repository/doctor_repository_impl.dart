@@ -1,11 +1,12 @@
-import '../../../../core/domain/entities/appointment_entity.dart';
-import '../../../../core/domain/entities/patient_entity.dart';
-import '../../../../core/domain/entities/prescription_entity.dart';
+import '../../../appointment/domain/entities/appointment_entity.dart';
+import '../../../patient/domain/entities/patient_entity.dart';
+import '../../../appointment/domain/entities/appointment_status.dart';
+import '../../domain/entities/prescription_entity.dart';
 import '../../domain/repository/doctor_repository.dart';
 import '../datasource/doctor_datasource.dart';
 
 class DoctorRepositoryImpl implements DoctorRepository {
-  final DoctorDataSource _dataSource;
+  final IDoctorDataSource _dataSource;
 
   DoctorRepositoryImpl(this._dataSource);
 
@@ -16,12 +17,12 @@ class DoctorRepositoryImpl implements DoctorRepository {
 
   @override
   Future<void> completeVisit(String appointmentId) async {
-    return _dataSource.updateAppointmentStatus(appointmentId, 'completed');
+    return _dataSource.updateAppointmentStatus(appointmentId, AppointmentStatus.completed.value);
   }
 
   @override
   Future<void> initiateConsultation(String appointmentId) async {
-    return _dataSource.updateAppointmentStatus(appointmentId, 'in_consultation');
+    return _dataSource.updateAppointmentStatus(appointmentId, AppointmentStatus.inConsultation.value);
   }
 
   @override

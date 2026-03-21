@@ -1,6 +1,6 @@
-import '../../../../core/domain/entities/appointment_entity.dart';
-import '../../../../core/domain/entities/patient_entity.dart';
-import '../../../../core/domain/entities/prescription_entity.dart';
+import '../../../appointment/domain/entities/appointment_entity.dart';
+import '../../../patient/domain/entities/patient_entity.dart';
+import '../entities/prescription_entity.dart';
 
 abstract class DoctorRepository {
   Future<List<AppointmentEntity>> getQueue();

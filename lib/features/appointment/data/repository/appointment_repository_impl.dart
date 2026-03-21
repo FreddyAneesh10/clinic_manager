@@ -1,9 +1,9 @@
-import '../../../../core/domain/entities/appointment_entity.dart';
+import '../../domain/entities/appointment_entity.dart';
 import '../../domain/repository/appointment_repository.dart';
 import '../datasource/appointment_datasource.dart';
 
 class AppointmentRepositoryImpl implements AppointmentRepository {
-  final AppointmentDataSource _dataSource;
+  final IAppointmentDataSource _dataSource;
 
   AppointmentRepositoryImpl(this._dataSource);
 

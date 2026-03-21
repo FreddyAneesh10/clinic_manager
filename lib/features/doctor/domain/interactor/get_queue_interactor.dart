@@ -1,4 +1,4 @@
-import '../../../../core/domain/entities/appointment_entity.dart';
+import '../../../appointment/domain/entities/appointment_entity.dart';
 import '../repository/doctor_repository.dart';
 
 class GetQueueInteractor {

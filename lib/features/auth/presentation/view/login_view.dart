@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/custom_dialog.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../auth_providers.dart';
 import '../../../doctor/presentation/router/doctor_router.dart';
@@ -49,14 +50,14 @@ class _LoginViewState extends ConsumerState<LoginView> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
 
-    // Show error snackbar if error exists
+    // Show error dialog if error exists
     ref.listen(authProvider, (previous, next) {
       if (next.error != null && next.error != previous?.error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(next.error!),
-            backgroundColor: AppColors.error,
-          ),
+        showAppDialog(
+          context: context,
+          title: 'Login Error',
+          message: next.error!,
+          type: DialogType.error,
         );
       }
     });

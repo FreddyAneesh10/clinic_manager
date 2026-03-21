@@ -1,9 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/domain/entities/appointment_entity.dart';
-import '../../../../core/domain/entities/patient_entity.dart';
-import '../../domain/interactor/add_appointment_interactor.dart';
+import '../../domain/entities/appointment_entity.dart';
+import '../../domain/interactor/schedule_appointment_interactor.dart';
 import '../../domain/interactor/get_appointments_interactor.dart';
-import '../../../patient/domain/interactor/register_patient_interactor.dart';
 
 class AppointmentState {
   final bool isLoading;
@@ -35,13 +33,11 @@ class AppointmentState {
 
 class AppointmentPresenter extends StateNotifier<AppointmentState> {
   final GetAppointmentsInteractor _getAppointmentsInteractor;
-  final AddAppointmentInteractor _addAppointmentInteractor;
-  final RegisterPatientInteractor _registerPatientInteractor;
+  final ScheduleAppointmentInteractor _scheduleAppointmentInteractor;
 
   AppointmentPresenter(
     this._getAppointmentsInteractor,
-    this._addAppointmentInteractor,
-    this._registerPatientInteractor,
+    this._scheduleAppointmentInteractor,
   ) : super(const AppointmentState()) {
     loadAppointments();
   }
@@ -62,15 +58,7 @@ class AppointmentPresenter extends StateNotifier<AppointmentState> {
   Future<bool> addAppointment(AppointmentEntity appointment) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      // Create PatientEntity from appointment info for registration
-      final patient = PatientEntity(
-        id: appointment.patientId,
-        name: appointment.patientName,
-        phone: appointment.phone,
-      );
-
-      await _registerPatientInteractor.execute(patient);
-      await _addAppointmentInteractor.execute(appointment);
+      await _scheduleAppointmentInteractor.execute(appointment);
 
       await loadAppointments();
       state = state.copyWith(isLoading: false, isSuccess: true);

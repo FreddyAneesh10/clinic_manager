@@ -53,6 +53,25 @@ class AppTheme {
           elevation: 0,
           textStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
           overlayColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          overlayColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          overlayColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          overlayColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

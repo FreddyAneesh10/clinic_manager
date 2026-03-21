@@ -1,9 +1,9 @@
 import '../../domain/repository/patient_repository.dart';
 import '../datasource/patient_datasource.dart';
-import '../../../../core/domain/entities/patient_entity.dart';
+import '../../domain/entities/patient_entity.dart';
 
 class PatientRepositoryImpl implements PatientRepository {
-  final PatientDataSource _dataSource;
+  final IPatientDataSource _dataSource;
 
   PatientRepositoryImpl(this._dataSource);
 

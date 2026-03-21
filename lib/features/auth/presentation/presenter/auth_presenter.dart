@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/usecase/login_usecase.dart';
-import '../../../../core/domain/entities/user_entity.dart';
+import '../../domain/entities/user_entity.dart';
 
 class AuthState {
   final bool isLoading;

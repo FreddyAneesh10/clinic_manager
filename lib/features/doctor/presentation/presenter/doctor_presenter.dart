@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/domain/entities/appointment_entity.dart';
-import '../../../../core/domain/entities/patient_entity.dart';
-import '../../../../core/domain/entities/prescription_entity.dart';
-import '../../domain/interactor/add_prescription_interactor.dart';
+import '../../../appointment/domain/entities/appointment_entity.dart';
+import '../../../patient/domain/entities/patient_entity.dart';
+import '../../domain/entities/prescription_entity.dart';
 import '../../domain/interactor/complete_visit_interactor.dart';
+import '../../domain/interactor/finalize_visit_interactor.dart';
 import '../../domain/interactor/get_patient_details_interactor.dart';
 import '../../domain/interactor/get_queue_interactor.dart';
 
@@ -46,21 +46,21 @@ class DoctorState {
     );
   }
 
-  int get waitingCount => queue.where((a) => a.status != 'completed').length;
-  int get completedCount => queue.where((a) => a.status == 'completed').length;
+  int get waitingCount => queue.where((a) => !a.isCompleted).length;
+  int get completedCount => queue.where((a) => a.isCompleted).length;
   int get totalCount => queue.length;
 }
 
 class DoctorPresenter extends StateNotifier<DoctorState> {
   final GetQueueInteractor _getQueueInteractor;
   final GetPatientDetailsInteractor _getPatientDetailsInteractor;
-  final AddPrescriptionInteractor _addPrescriptionInteractor;
+  final FinalizeVisitInteractor _finalizeVisitInteractor;
   final CompleteVisitInteractor _completeVisitInteractor;
 
   DoctorPresenter(
     this._getQueueInteractor,
     this._getPatientDetailsInteractor,
-    this._addPrescriptionInteractor,
+    this._finalizeVisitInteractor,
     this._completeVisitInteractor,
   ) : super(const DoctorState()) {
     loadQueue();
@@ -86,8 +86,8 @@ class DoctorPresenter extends StateNotifier<DoctorState> {
       final details = await _getPatientDetailsInteractor.execute(appointment.patientId);
       state = state.copyWith(
         isLoading: false,
-        selectedPatient: details['patient'] as PatientEntity,
-        patientPrescriptions: details['prescriptions'] as List<PrescriptionEntity>,
+        selectedPatient: details.patient,
+        patientPrescriptions: details.prescriptions,
       );
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -97,8 +97,7 @@ class DoctorPresenter extends StateNotifier<DoctorState> {
   Future<bool> addPrescription(PrescriptionEntity prescription) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await _addPrescriptionInteractor.execute(prescription);
-      await _completeVisitInteractor.execute(prescription.appointmentId);
+      await _finalizeVisitInteractor.execute(prescription);
       await loadQueue();
       state = state.copyWith(isLoading: false, isSuccess: true);
       return true;

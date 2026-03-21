@@ -1,4 +1,4 @@
-import '../../../../core/domain/entities/patient_entity.dart';
+import '../entities/patient_entity.dart';
 import '../repository/patient_repository.dart';
 
 class GetAllPatientsInteractor {

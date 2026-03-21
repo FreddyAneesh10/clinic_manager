@@ -1,4 +1,4 @@
-import '../../../../core/domain/entities/appointment_entity.dart';
+import '../entities/appointment_entity.dart';
 import '../repository/appointment_repository.dart';
 
 class GetAppointmentsInteractor {

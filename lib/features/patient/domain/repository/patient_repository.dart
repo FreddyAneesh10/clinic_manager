@@ -1,4 +1,4 @@
-import '../../../../core/domain/entities/patient_entity.dart';
+import '../entities/patient_entity.dart';
 
 abstract class PatientRepository {
   Future<void> registerPatient(PatientEntity patient);

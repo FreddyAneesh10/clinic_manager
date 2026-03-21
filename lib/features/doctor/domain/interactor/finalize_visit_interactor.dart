@@ -1,15 +1,16 @@
 import '../entities/prescription_entity.dart';
 import '../repository/doctor_repository.dart';
 
-class AddPrescriptionInteractor {
+class FinalizeVisitInteractor {
   final DoctorRepository _repository;
 
-  AddPrescriptionInteractor(this._repository);
+  FinalizeVisitInteractor(this._repository);
 
   Future<void> execute(PrescriptionEntity prescription) async {
-    if (prescription.diagnosis.isEmpty || prescription.medicines.isEmpty) {
-      throw Exception('Diagnosis and medicines are required');
-    }
+    // 1. Add prescription
     await _repository.addPrescription(prescription);
+
+    // 2. Complete visit
+    await _repository.completeVisit(prescription.appointmentId);
   }
 }
