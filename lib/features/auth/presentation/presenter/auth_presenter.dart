@@ -1,41 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/usecase/login_usecase.dart';
-import '../../domain/entities/user_entity.dart';
-
-class AuthState {
-  final bool isLoading;
-  final String? error;
-  final UserEntity? user;
-
-  const AuthState({
-    this.isLoading = false,
-    this.error,
-    this.user,
-  });
-
-  AuthState copyWith({
-    bool? isLoading,
-    String? error,
-    UserEntity? user,
-  }) {
-    return AuthState(
-      isLoading: isLoading ?? this.isLoading,
-      error: error, // Can be null to clear error
-      user: user ?? this.user,
-    );
-  }
-}
+import '../../interactor/login_interactor.dart';
+import 'auth_state.dart';
 
 class AuthPresenter extends StateNotifier<AuthState> {
-  final LoginUseCase _loginUseCase;
+  final LoginInteractor _loginInteractor;
 
-  AuthPresenter(this._loginUseCase) : super(const AuthState());
+  AuthPresenter(this._loginInteractor) : super(const AuthState());
 
   Future<bool> login(String username, String password) async {
     state = state.copyWith(isLoading: true, error: null);
     
     try {
-      final user = await _loginUseCase.execute(username, password);
+      final user = await _loginInteractor.execute(username, password);
       state = state.copyWith(isLoading: false, user: user);
       return true;
     } catch (e) {

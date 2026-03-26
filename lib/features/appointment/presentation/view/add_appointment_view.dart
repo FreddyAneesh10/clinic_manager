@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import '../../../../core/widgets/app_layout.dart';
 import '../../../../core/widgets/custom_dialog.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/labeled_field.dart';
-import '../../../../core/widgets/picker_field.dart';
 import '../../../../core/widgets/form_action_button.dart';
-import '../../../../core/widgets/responsive.dart';
+import '../../../../core/widgets/date_time_selection.dart';
 import '../../../receptionist/presentation/router/receptionist_router.dart';
 import '../../appointment_providers.dart';
-import '../controller/add_appointment_controller.dart';
+import '../handler/add_appointment_handler.dart';
 
 class AddAppointmentView extends ConsumerStatefulWidget {
   const AddAppointmentView({super.key});
@@ -20,37 +18,63 @@ class AddAppointmentView extends ConsumerStatefulWidget {
 }
 
 class _AddAppointmentViewState extends ConsumerState<AddAppointmentView> {
+  final _handler = AddAppointmentHandler();
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _reasonController = TextEditingController();
+
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
+
   @override
   void initState() {
     super.initState();
     Future.microtask(() => ref.read(appointmentProvider.notifier).loadAppointments());
   }
 
-  Future<void> _selectDate(AddAppointmentController ctrl) async {
-    final res = await showDatePicker(
-      context: context,
-      initialDate: ctrl.selectedDate ?? DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
-    if (res != null) ctrl.setDate(res);
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _reasonController.dispose();
+    super.dispose();
   }
 
-  Future<void> _selectTime(AddAppointmentController ctrl) async {
-    final res = await showTimePicker(
-      context: context,
-      initialTime: ctrl.selectedTime ?? const TimeOfDay(hour: 9, minute: 0),
-    );
-    if (res != null) ctrl.setTime(res);
+  Future<void> _selectDate() async {
+    final res = await _handler.selectDate(context, _selectedDate);
+    if (res != null) setState(() => _selectedDate = res);
   }
 
-  Future<void> _save(AddAppointmentController ctrl) async {
-    final error = ctrl.validateForm();
+  Future<void> _selectTime() async {
+    final res = await _handler.selectTime(context, _selectedTime);
+    if (res != null) setState(() => _selectedTime = res);
+  }
+
+  Future<void> _save() async {
+    final error = _handler.validateForm(
+      formKey: _formKey,
+      selectedDate: _selectedDate,
+      selectedTime: _selectedTime,
+      phone: _phoneController.text.trim(),
+    );
+
     if (error != null) {
       showAppDialog(context: context, title: 'Error', message: error, type: DialogType.error);
       return;
     }
-    if (await ctrl.save() && mounted) {
+
+    final entity = _handler.buildEntity(
+      selectedDate: _selectedDate!,
+      selectedTime: _selectedTime!,
+      name: _nameController.text.trim(),
+      phone: _phoneController.text.trim(),
+      reason: _reasonController.text.trim(),
+    );
+
+    final success = await ref.read(appointmentProvider.notifier).addAppointment(entity);
+
+    if (success && mounted) {
       showAppDialog(
         context: context,
         title: 'Success',
@@ -64,8 +88,6 @@ class _AddAppointmentViewState extends ConsumerState<AddAppointmentView> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(appointmentProvider);
-    final ctrl = ref.watch(addAppointmentControllerProvider);
-
     ref.listen(appointmentProvider, (previous, next) {
       if (next.error != null && next.error != previous?.error) {
         showAppDialog(context: context, title: 'Error', message: next.error!, type: DialogType.error);
@@ -73,123 +95,74 @@ class _AddAppointmentViewState extends ConsumerState<AddAppointmentView> {
       }
     });
 
-    if (state.isLoading && ctrl.nameController.text.isEmpty) {
+    if (state.isLoading && _nameController.text.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return AnimatedBuilder(
-      animation: ctrl,
-      builder: (context, _) => SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 800),
-            child: AppCard(
-              child: Form(
-                key: ctrl.formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Appointment Details',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: AppCard(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Appointment Details', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 24),
+                  LabeledField(
+                    label: 'Patient Name',
+                    child: CustomTextField(
+                      controller: _nameController,
+                      hintText: 'Enter patient full name...',
+                      prefixIcon: const Icon(Icons.person_outline),
+                      validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
                     ),
-                    const SizedBox(height: 24),
-                    LabeledField(
-                      label: 'Patient Name',
-                      child: CustomTextField(
-                        controller: ctrl.nameController,
-                        hintText: 'Enter patient full name...',
-                        prefixIcon: const Icon(Icons.person_outline),
-                        validator: ctrl.validateName,
-                      ),
+                  ),
+                  const SizedBox(height: 24),
+                  LabeledField(
+                    label: 'Phone Number',
+                    child: CustomTextField(
+                      controller: _phoneController,
+                      hintText: 'Enter mobile number...',
+                      prefixIcon: const Icon(Icons.phone_outlined),
+                      keyboardType: TextInputType.phone,
+                      validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
                     ),
-                    const SizedBox(height: 24),
-                    LabeledField(
-                      label: 'Phone Number',
-                      child: CustomTextField(
-                        controller: ctrl.phoneController,
-                        hintText: 'Enter mobile number...',
-                        prefixIcon: const Icon(Icons.phone_outlined),
-                        keyboardType: TextInputType.phone,
-                        validator: ctrl.validatePhone,
-                      ),
+                  ),
+                  const SizedBox(height: 24),
+                  DateTimeSelection(
+                    selectedDate: _selectedDate,
+                    selectedTime: _selectedTime,
+                    onDate: _selectDate,
+                    onTime: _selectTime,
+                  ),
+                  const SizedBox(height: 24),
+                  LabeledField(
+                    label: 'Visit Reason',
+                    child: CustomTextField(
+                      controller: _reasonController,
+                      maxLines: 3,
+                      hintText: 'Describe the main reason for the visit...',
+                      alignLabelWithHint: true,
+                      validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
                     ),
-                    const SizedBox(height: 24),
-                    _DateTimeSelection(
-                      ctrl: ctrl,
-                      onDate: () => _selectDate(ctrl),
-                      onTime: () => _selectTime(ctrl),
-                    ),
-                    const SizedBox(height: 24),
-                    LabeledField(
-                      label: 'Visit Reason',
-                      child: CustomTextField(
-                        controller: ctrl.reasonController,
-                        maxLines: 3,
-                        hintText: 'Describe the main reason for the visit...',
-                        alignLabelWithHint: true,
-                        validator: ctrl.validateReason,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    FormActionButton(
-                      isLoading: state.isLoading,
-                      label: 'Save Appointment',
-                      onAction: () => _save(ctrl),
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 32),
+                  FormActionButton(
+                    isLoading: state.isLoading,
+                    label: 'Save Appointment',
+                    onAction: _save,
+                  ),
+                ],
               ),
             ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class _DateTimeSelection extends StatelessWidget {
-  final AddAppointmentController ctrl;
-  final VoidCallback onDate, onTime;
-  const _DateTimeSelection({required this.ctrl, required this.onDate, required this.onTime});
-
-  @override
-  Widget build(BuildContext context) {
-    final isMobile = Responsive.isMobile(context);
-    final dateStr = ctrl.selectedDate == null ? 'Choose Date' : DateFormat('MMM d, yyyy').format(ctrl.selectedDate!);
-    final timeStr = ctrl.selectedTime == null ? 'Choose Time' : ctrl.selectedTime!.format(context);
-
-    return Flex(
-      direction: isMobile ? Axis.vertical : Axis.horizontal,
-      children: [
-        Expanded(
-          flex: isMobile ? 0 : 1,
-          child: LabeledField(
-            label: 'Select Date',
-            child: PickerField(
-              onTap: onDate,
-              icon: Icons.calendar_today,
-              value: dateStr,
-              isEmpty: ctrl.selectedDate == null,
-            ),
-          ),
-        ),
-        SizedBox(width: isMobile ? 0 : 16, height: isMobile ? 24 : 0),
-        Expanded(
-          flex: isMobile ? 0 : 1,
-          child: LabeledField(
-            label: 'Select Time',
-            child: PickerField(
-              onTap: onTime,
-              icon: Icons.access_time,
-              value: timeStr,
-              isEmpty: ctrl.selectedTime == null,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

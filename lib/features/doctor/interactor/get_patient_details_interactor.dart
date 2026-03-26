@@ -1,5 +1,5 @@
-import '../entities/patient_visit_details.dart';
-import '../repository/doctor_repository.dart';
+import '../domain/entities/patient_visit_details.dart';
+import '../domain/repository/doctor_repository.dart';
 
 class GetPatientDetailsInteractor {
   final DoctorRepository _repository;

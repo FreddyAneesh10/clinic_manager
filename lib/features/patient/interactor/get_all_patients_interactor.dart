@@ -1,5 +1,5 @@
-import '../entities/patient_entity.dart';
-import '../repository/patient_repository.dart';
+import '../domain/entities/patient_entity.dart';
+import '../domain/repository/patient_repository.dart';
 
 class GetAllPatientsInteractor {
   final PatientRepository _repository;

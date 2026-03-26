@@ -1,5 +1,5 @@
 import '../../patient/domain/entities/patient_entity.dart';
-import '../../patient/domain/interactor/register_patient_interactor.dart';
+import '../../patient/interactor/register_patient_interactor.dart';
 import '../domain/entities/appointment_entity.dart';
 import '../domain/repository/appointment_repository.dart';
 

@@ -1,5 +1,5 @@
-import '../../../appointment/domain/entities/appointment_entity.dart';
-import '../repository/doctor_repository.dart';
+import '../../appointment/domain/entities/appointment_entity.dart';
+import '../domain/repository/doctor_repository.dart';
 
 class GetQueueInteractor {
   final DoctorRepository _repository;

@@ -1,5 +1,5 @@
-import '../entities/prescription_entity.dart';
-import '../repository/doctor_repository.dart';
+import '../domain/entities/prescription_entity.dart';
+import '../domain/repository/doctor_repository.dart';
 
 class FinalizeVisitInteractor {
   final DoctorRepository _repository;

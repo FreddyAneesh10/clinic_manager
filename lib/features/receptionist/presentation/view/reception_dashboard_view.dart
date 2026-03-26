@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_layout.dart';
 import '../../../../core/widgets/responsive.dart';
+import '../../../../core/widgets/stat_card.dart';
 import '../../receptionist_providers.dart';
 import '../../../appointment/appointment_providers.dart';
 
@@ -45,7 +46,7 @@ class _ReceptionDashboardViewState extends ConsumerState<ReceptionDashboardView>
                   spacing: 16,
                   runSpacing: 16,
                   children: [
-                    _StatCard(
+                    StatCard(
                       title: 'Total Patients',
                       value: state.patients.length.toString(),
                       icon: Icons.people,
@@ -54,7 +55,7 @@ class _ReceptionDashboardViewState extends ConsumerState<ReceptionDashboardView>
                           ? double.infinity
                           : (MediaQuery.of(context).size.width - 48 - 32) / 3,
                     ),
-                    _StatCard(
+                    StatCard(
                       title: "Today's Appointments",
                       value: appointmentState.appointments.length.toString(),
                       icon: Icons.event,
@@ -63,7 +64,7 @@ class _ReceptionDashboardViewState extends ConsumerState<ReceptionDashboardView>
                           ? double.infinity
                           : (MediaQuery.of(context).size.width - 48 - 32) / 3,
                     ),
-                    _StatCard(
+                    StatCard(
                       title: 'Completed',
                       value: appointmentState.appointments
                           .where((a) => a.status == 'completed')
@@ -192,59 +193,5 @@ class _ReceptionDashboardViewState extends ConsumerState<ReceptionDashboardView>
               ],
             ),
           );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final IconData icon;
-  final Color color;
-  final double? width;
-
-  const _StatCard({
-    required this.title,
-    required this.value,
-    required this.icon,
-    required this.color,
-    this.width,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      child: AppCard(
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: color, size: 24),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    value,
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

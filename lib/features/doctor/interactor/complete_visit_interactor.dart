@@ -1,4 +1,4 @@
-import '../repository/doctor_repository.dart';
+import '../domain/repository/doctor_repository.dart';
 
 class CompleteVisitInteractor {
   final DoctorRepository _repository;

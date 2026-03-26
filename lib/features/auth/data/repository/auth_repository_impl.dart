@@ -1,9 +1,9 @@
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repository/auth_repository.dart';
-import '../datasource/auth_local_datasource.dart';
+import '../datasource/auth_datasource.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final AuthLocalDataSource _dataSource;
+  final IAuthDataSource _dataSource;
 
   AuthRepositoryImpl(this._dataSource);
 

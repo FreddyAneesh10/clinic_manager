@@ -2,10 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../appointment/domain/entities/appointment_entity.dart';
 import '../../../patient/domain/entities/patient_entity.dart';
 import '../../domain/entities/prescription_entity.dart';
-import '../../domain/interactor/complete_visit_interactor.dart';
-import '../../domain/interactor/finalize_visit_interactor.dart';
-import '../../domain/interactor/get_patient_details_interactor.dart';
-import '../../domain/interactor/get_queue_interactor.dart';
+import '../../interactor/complete_visit_interactor.dart';
+import '../../interactor/finalize_visit_interactor.dart';
+import '../../interactor/get_patient_details_interactor.dart';
+import '../../interactor/get_queue_interactor.dart';
 
 class DoctorState {
   final bool isLoading;

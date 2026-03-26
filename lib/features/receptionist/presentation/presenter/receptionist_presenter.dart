@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../patient/domain/entities/patient_entity.dart';
-import '../../../patient/domain/interactor/get_all_patients_interactor.dart';
-import '../../../patient/domain/interactor/register_patient_interactor.dart';
+import '../../../patient/interactor/get_all_patients_interactor.dart';
+import '../../../patient/interactor/register_patient_interactor.dart';
 
 class ReceptionistState {
   final bool isLoading;

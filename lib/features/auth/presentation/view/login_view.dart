@@ -5,7 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/custom_dialog.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/labeled_field.dart';
+import '../../../../core/widgets/form_action_button.dart';
 import '../../auth_providers.dart';
+import '../presenter/auth_state.dart';
 import '../../../doctor/presentation/router/doctor_router.dart';
 import '../../../receptionist/presentation/router/receptionist_router.dart';
 
@@ -17,9 +20,9 @@ class LoginView extends ConsumerStatefulWidget {
 }
 
 class _LoginViewState extends ConsumerState<LoginView> {
+  final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -28,13 +31,16 @@ class _LoginViewState extends ConsumerState<LoginView> {
     super.dispose();
   }
 
-  Future<void> _login() async {
+  String? _validateUsername(String? value) => value?.isEmpty ?? true ? 'Required' : null;
+  String? _validatePassword(String? value) => value?.isEmpty ?? true ? 'Required' : null;
+
+  Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
     final success = await ref.read(authProvider.notifier).login(
-          _usernameController.text.trim(),
-          _passwordController.text.trim(),
-        );
+      _usernameController.text.trim(),
+      _passwordController.text.trim(),
+    );
 
     if (success && mounted) {
       final user = ref.read(authProvider).user;
@@ -50,15 +56,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
 
-    // Show error dialog if error exists
-    ref.listen(authProvider, (previous, next) {
+    ref.listen<AuthState>(authProvider, (previous, next) {
       if (next.error != null && next.error != previous?.error) {
-        showAppDialog(
-          context: context,
-          title: 'Login Error',
-          message: next.error!,
-          type: DialogType.error,
-        );
+        showAppDialog(context: context, title: 'Login Error', message: next.error!, type: DialogType.error);
       }
     });
 
@@ -76,71 +76,34 @@ class _LoginViewState extends ConsumerState<LoginView> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Logo / Icon
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.local_hospital,
-                          size: 48,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        'Mini Clinic Manager',
-                        style: Theme.of(context).textTheme.headlineMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Please login to your account',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
+                      const _LoginHeader(),
                       const SizedBox(height: 32),
-                      
-                      // Username
-                      CustomTextField(
-                        controller: _usernameController,
-                        labelText: 'Username',
-                        prefixIcon: const Icon(Icons.person_outline),
-                        validator: (value) => 
-                            value == null || value.isEmpty ? 'Required' : null,
+                      LabeledField(
+                        label: 'Username',
+                        child: CustomTextField(
+                          controller: _usernameController,
+                          hintText: 'Enter your username...',
+                          prefixIcon: const Icon(Icons.person_outline),
+                          validator: _validateUsername,
+                        ),
                       ),
                       const SizedBox(height: 16),
-                      
-                      // Password
-                      CustomTextField(
-                        controller: _passwordController,
-                        obscureText: true,
-                        labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        validator: (value) => 
-                            value == null || value.isEmpty ? 'Required' : null,
+                      LabeledField(
+                        label: 'Password',
+                        child: CustomTextField(
+                          controller: _passwordController,
+                          obscureText: true,
+                          hintText: 'Enter your password...',
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          validator: _validatePassword,
+                        ),
                       ),
                       const SizedBox(height: 32),
-                      
-                      // Login Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed: authState.isLoading ? null : _login,
-                          child: authState.isLoading
-                              ? const SizedBox(
-                                  height: 24,
-                                  width: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Text('Login'),
-                        ),
+                      FormActionButton(
+                        isLoading: authState.isLoading,
+                        label: 'Login',
+                        alignment: Alignment.center,
+                        onAction: _handleLogin,
                       ),
                     ],
                   ),
@@ -150,6 +113,29 @@ class _LoginViewState extends ConsumerState<LoginView> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _LoginHeader extends StatelessWidget {
+  const _LoginHeader();
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.local_hospital, size: 48, color: AppColors.primary),
+        ),
+        const SizedBox(height: 24),
+        Text('Mini Clinic Manager', style: Theme.of(context).textTheme.headlineMedium, textAlign: TextAlign.center),
+        const SizedBox(height: 8),
+        Text('Please login to your account', style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center),
+      ],
     );
   }
 }

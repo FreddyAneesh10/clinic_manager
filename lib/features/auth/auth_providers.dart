@@ -1,13 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import './data/datasource/auth_datasource.dart';
 import './data/datasource/auth_local_datasource.dart';
 import './data/repository/auth_repository_impl.dart';
 import './domain/repository/auth_repository.dart';
-import './domain/usecase/login_usecase.dart';
+import 'interactor/login_interactor.dart';
 import './presentation/presenter/auth_presenter.dart';
+import './presentation/presenter/auth_state.dart';
 
 // DataSource
-final authLocalDataSourceProvider = Provider<AuthLocalDataSource>((ref) {
+final authLocalDataSourceProvider = Provider<IAuthDataSource>((ref) {
   return AuthLocalDataSource();
 });
 
@@ -17,14 +19,14 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(dataSource);
 });
 
-// UseCase
-final loginUseCaseProvider = Provider<LoginUseCase>((ref) {
+// Interactor (VIPER)
+final loginInteractorProvider = Provider<LoginInteractor>((ref) {
   final repository = ref.watch(authRepositoryProvider);
-  return LoginUseCase(repository);
+  return LoginInteractor(repository);
 });
 
 // Presenter (StateNotifierProvider)
 final authProvider = StateNotifierProvider<AuthPresenter, AuthState>((ref) {
-  final loginUseCase = ref.watch(loginUseCaseProvider);
-  return AuthPresenter(loginUseCase);
+  final loginInteractor = ref.watch(loginInteractorProvider);
+  return AuthPresenter(loginInteractor);
 });

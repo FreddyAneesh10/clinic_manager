@@ -1,4 +1,7 @@
-class AuthLocalDataSource {
+import 'auth_datasource.dart';
+
+class AuthLocalDataSource implements IAuthDataSource {
+  @override
   Future<Map<String, dynamic>> login(String username, String password) async {
     // Simulate network delay
     await Future.delayed(const Duration(milliseconds: 800));

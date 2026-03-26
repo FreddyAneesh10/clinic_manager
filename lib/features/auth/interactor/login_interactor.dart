@@ -1,10 +1,10 @@
-import '../entities/user_entity.dart';
-import '../repository/auth_repository.dart';
+import '../domain/entities/user_entity.dart';
+import '../domain/repository/auth_repository.dart';
 
-class LoginUseCase {
+class LoginInteractor {
   final AuthRepository _repository;
 
-  LoginUseCase(this._repository);
+  LoginInteractor(this._repository);
 
   Future<UserEntity> execute(String username, String password) async {
     if (username.isEmpty || password.isEmpty) {
