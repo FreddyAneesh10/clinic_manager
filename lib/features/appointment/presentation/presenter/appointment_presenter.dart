@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/appointment_entity.dart';
-import '../../domain/interactor/schedule_appointment_interactor.dart';
-import '../../domain/interactor/get_appointments_interactor.dart';
+import '../../interactor/schedule_appointment_interactor.dart';
+import '../../interactor/get_appointments_interactor.dart';
 
 class AppointmentState {
   final bool isLoading;

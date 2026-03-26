@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import './data/datasource/appointment_datasource.dart';
 import './data/repository/appointment_repository_impl.dart';
 import './domain/repository/appointment_repository.dart';
-import './domain/interactor/add_appointment_interactor.dart';
-import './domain/interactor/get_appointments_interactor.dart';
+import 'interactor/add_appointment_interactor.dart';
+import 'interactor/get_appointments_interactor.dart';
 import './presentation/presenter/appointment_presenter.dart';
 import '../patient/patient_providers.dart';
 
-import './domain/interactor/schedule_appointment_interactor.dart';
+import 'interactor/schedule_appointment_interactor.dart';
 
 // DataSource
 final appointmentDataSourceProvider = Provider<IAppointmentDataSource>((ref) {
