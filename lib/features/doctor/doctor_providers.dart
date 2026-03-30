@@ -24,25 +24,29 @@ final doctorRepositoryProvider = Provider<DoctorRepository>((ref) {
 // Interactors
 final getQueueInteractorProvider = Provider<GetQueueInteractor>((ref) {
   final repository = ref.watch(doctorRepositoryProvider);
-  return GetQueueInteractor(repository);
+  return GetQueueInteractorImpl(repository);
 });
 
-final getPatientDetailsInteractorProvider = Provider<GetPatientDetailsInteractor>((ref) {
+final getPatientDetailsInteractorProvider =
+    Provider<GetPatientDetailsInteractor>((ref) {
   final repository = ref.watch(doctorRepositoryProvider);
-  return GetPatientDetailsInteractor(repository);
+  return GetPatientDetailsInteractorImpl(repository);
 });
 
-final completeVisitInteractorProvider = Provider<CompleteVisitInteractor>((ref) {
+final completeVisitInteractorProvider =
+    Provider<CompleteVisitInteractor>((ref) {
   final repository = ref.watch(doctorRepositoryProvider);
-  return CompleteVisitInteractor(repository);
+  return CompleteVisitInteractorImpl(repository);
 });
 
-final finalizeVisitInteractorProvider = Provider<FinalizeVisitInteractor>((ref) {
-  return FinalizeVisitInteractor(ref.watch(doctorRepositoryProvider));
+final finalizeVisitInteractorProvider =
+    Provider<FinalizeVisitInteractor>((ref) {
+  return FinalizeVisitInteractorImpl(ref.watch(doctorRepositoryProvider));
 });
 
 // Presenter
-final doctorProvider = StateNotifierProvider<DoctorPresenter, DoctorState>((ref) {
+final doctorProvider =
+    StateNotifierProvider<DoctorPresenter, DoctorState>((ref) {
   return DoctorPresenter(
     ref.watch(getQueueInteractorProvider),
     ref.watch(getPatientDetailsInteractorProvider),

@@ -1,11 +1,16 @@
 import '../domain/entities/prescription_entity.dart';
 import '../domain/repository/doctor_repository.dart';
 
-class FinalizeVisitInteractor {
+abstract class FinalizeVisitInteractor {
+  Future<void> execute(PrescriptionEntity prescription);
+}
+
+class FinalizeVisitInteractorImpl implements FinalizeVisitInteractor {
   final DoctorRepository _repository;
 
-  FinalizeVisitInteractor(this._repository);
+  FinalizeVisitInteractorImpl(this._repository);
 
+  @override
   Future<void> execute(PrescriptionEntity prescription) async {
     // 1. Add prescription
     await _repository.addPrescription(prescription);

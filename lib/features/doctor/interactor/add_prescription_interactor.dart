@@ -1,15 +1,28 @@
 import '../domain/entities/prescription_entity.dart';
 import '../domain/repository/doctor_repository.dart';
 
-class AddPrescriptionInteractor {
+/// Contract for adding a prescription (DIP).
+abstract class AddPrescriptionInteractor {
+  Future<void> execute(PrescriptionEntity prescription);
+}
+
+/// Implementation of the AddPrescription use case.
+class AddPrescriptionInteractorImpl implements AddPrescriptionInteractor {
   final DoctorRepository _repository;
 
-  AddPrescriptionInteractor(this._repository);
+  AddPrescriptionInteractorImpl(this._repository);
 
+  @override
   Future<void> execute(PrescriptionEntity prescription) async {
-    if (prescription.diagnosis.isEmpty || prescription.medicines.isEmpty) {
+    _validate(prescription);
+    await _repository.addPrescription(prescription);
+  }
+
+  /// SRP: Encapsulated validation logic.
+  void _validate(PrescriptionEntity prescription) {
+    if (prescription.diagnosis.trim().isEmpty ||
+        prescription.medicines.isEmpty) {
       throw Exception('Diagnosis and medicines are required');
     }
-    await _repository.addPrescription(prescription);
   }
 }

@@ -66,8 +66,6 @@ class _DoctorDashboardViewState extends ConsumerState<DoctorDashboardView> {
                   ],
                 ),
                 const SizedBox(height: 24),
-
-                // Queue Table
                 AppCard(
                   padding: EdgeInsets.zero,
                   child: Column(

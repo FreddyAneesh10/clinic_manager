@@ -1,10 +1,15 @@
 import '../domain/repository/doctor_repository.dart';
 
-class CompleteVisitInteractor {
+abstract class CompleteVisitInteractor {
+  Future<void> execute(String appointmentId);
+}
+
+class CompleteVisitInteractorImpl implements CompleteVisitInteractor {
   final DoctorRepository _repository;
 
-  CompleteVisitInteractor(this._repository);
+  CompleteVisitInteractorImpl(this._repository);
 
+  @override
   Future<void> execute(String appointmentId) async {
     await _repository.completeVisit(appointmentId);
   }

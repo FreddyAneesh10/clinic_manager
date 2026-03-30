@@ -22,7 +22,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 // Interactor (VIPER)
 final loginInteractorProvider = Provider<LoginInteractor>((ref) {
   final repository = ref.watch(authRepositoryProvider);
-  return LoginInteractor(repository);
+  return LoginInteractorImpl(repository);
 });
 
 // Presenter (StateNotifierProvider)

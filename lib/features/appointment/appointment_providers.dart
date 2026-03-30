@@ -25,20 +25,20 @@ final appointmentRepositoryProvider = Provider<AppointmentRepository>((ref) {
 final getAppointmentsInteractorProvider =
     Provider<GetAppointmentsInteractor>((ref) {
   final repository = ref.watch(appointmentRepositoryProvider);
-  return GetAppointmentsInteractor(repository);
+  return GetAppointmentsInteractorImpl(repository);
 });
 
 final addAppointmentInteractorProvider =
     Provider<AddAppointmentInteractor>((ref) {
   final repository = ref.watch(appointmentRepositoryProvider);
-  return AddAppointmentInteractor(repository);
+  return AddAppointmentInteractorImpl(repository);
 });
 
 final scheduleAppointmentInteractorProvider =
     Provider<ScheduleAppointmentInteractor>((ref) {
-  return ScheduleAppointmentInteractor(
+  return ScheduleAppointmentInteractorImpl(
     ref.watch(appointmentRepositoryProvider),
-    ref.watch(registerPatientInteractorProvider),
+    ref.watch(patientRepositoryProvider),
   );
 });
 

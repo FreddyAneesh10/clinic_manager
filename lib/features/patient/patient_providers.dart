@@ -15,12 +15,14 @@ final patientRepositoryProvider = Provider<PatientRepository>((ref) {
   return PatientRepositoryImpl(dataSource);
 });
 
-final registerPatientInteractorProvider = Provider<RegisterPatientInteractor>((ref) {
+final registerPatientInteractorProvider =
+    Provider<RegisterPatientInteractor>((ref) {
   final repository = ref.watch(patientRepositoryProvider);
-  return RegisterPatientInteractor(repository);
+  return RegisterPatientInteractorImpl(repository);
 });
 
-final getAllPatientsInteractorProvider = Provider<GetAllPatientsInteractor>((ref) {
+final getAllPatientsInteractorProvider =
+    Provider<GetAllPatientsInteractor>((ref) {
   final repository = ref.watch(patientRepositoryProvider);
-  return GetAllPatientsInteractor(repository);
+  return GetAllPatientsInteractorImpl(repository);
 });
