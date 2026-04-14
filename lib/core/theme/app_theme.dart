@@ -31,6 +31,7 @@ class AppTheme {
         brightness: Brightness.light,
       ).copyWith(
         primary: AppColors.primary,
+        secondary: AppColors.accent,
         surface: AppColors.surface,
       ),
       scaffoldBackgroundColor: AppColors.background,
@@ -95,7 +96,7 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         color: AppColors.surface,
-        elevation: 0,
+          elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
           side: const BorderSide(color: AppColors.border),
@@ -112,4 +113,7 @@ class AppTheme {
       ),
     );
   }
+
+  // Maintaining light theme for compatibility if needed, but Task Track is dark focused
+  static ThemeData get light => dark; 
 }
