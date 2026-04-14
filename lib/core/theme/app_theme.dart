@@ -114,6 +114,4 @@ class AppTheme {
     );
   }
 
-  // Maintaining light theme for compatibility if needed, but Task Track is dark focused
-  static ThemeData get light => dark; 
 }

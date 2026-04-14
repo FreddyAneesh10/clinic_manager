@@ -9,6 +9,7 @@ import './presentation/presenter/appointment_presenter.dart';
 import '../patient/patient_providers.dart';
 
 import 'interactor/schedule_appointment_interactor.dart';
+import './domain/sorter/appointment_sort_strategy.dart';
 
 // DataSource
 final appointmentDataSourceProvider = Provider<IAppointmentDataSource>((ref) {
@@ -21,11 +22,18 @@ final appointmentRepositoryProvider = Provider<AppointmentRepository>((ref) {
   return AppointmentRepositoryImpl(dataSource);
 });
 
+
+// Sorter Strategy
+final appointmentSortStrategyProvider = Provider<AppointmentSortStrategy>((ref) {
+  return TimeSortStrategy();
+});
+
 // Interactors
 final getAppointmentsInteractorProvider =
     Provider<GetAppointmentsInteractor>((ref) {
   final repository = ref.watch(appointmentRepositoryProvider);
-  return GetAppointmentsInteractorImpl(repository);
+  final sorter = ref.watch(appointmentSortStrategyProvider);
+  return GetAppointmentsInteractorImpl(repository, sorter);
 });
 
 final addAppointmentInteractorProvider =

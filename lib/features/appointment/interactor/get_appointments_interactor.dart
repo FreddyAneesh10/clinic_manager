@@ -1,5 +1,6 @@
 import '../domain/entities/appointment_entity.dart';
 import '../domain/repository/appointment_repository.dart';
+import '../domain/sorter/appointment_sort_strategy.dart';
 
 /// Contract for fetching appointment data (DIP).
 abstract class GetAppointmentsInteractor {
@@ -9,22 +10,18 @@ abstract class GetAppointmentsInteractor {
 /// Implementation of the GetAppointments use case.
 class GetAppointmentsInteractorImpl implements GetAppointmentsInteractor {
   final AppointmentRepository _repository;
+  final AppointmentSortStrategy _sorter;
 
-  GetAppointmentsInteractorImpl(this._repository);
+  GetAppointmentsInteractorImpl(this._repository, this._sorter);
 
   @override
   Future<List<AppointmentEntity>> execute() async {
     final appointments = await _repository.getAppointments();
     
-    // SRP: Sorting logic encapsulated separately from fetch logic.
-    _sortAppointments(appointments);
+    // OCP: Sorting strategy is now injected, making the class open for 
+    // extension and closed for modification.
+    _sorter.sort(appointments);
     
     return appointments;
-  }
-
-  /// Encapsulated sorting strategy to keep execute() focused on orchestration.
-  void _sortAppointments(List<AppointmentEntity> appointments) {
-    // Ideally use DateTime for robust sorting, but string compare for current demo.
-    appointments.sort((a, b) => a.time.compareTo(b.time));
   }
 }

@@ -23,7 +23,8 @@ class _SignupViewState extends State<SignupView> {
         children: [
           // Background Curve
           CustomPaint(
-            size: Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
+            size: Size(MediaQuery.of(context).size.width,
+                MediaQuery.of(context).size.height),
             painter: _SignupBackgroundPainter(),
           ),
           SafeArea(
@@ -31,7 +32,7 @@ class _SignupViewState extends State<SignupView> {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 children: [
-                   const SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   // Header
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -41,20 +42,26 @@ class _SignupViewState extends State<SignupView> {
                         children: [
                           IconButton(
                             onPressed: () {},
-                            icon: const Icon(Icons.dark_mode_outlined, color: Colors.white),
+                            icon: const Icon(Icons.dark_mode_outlined,
+                                color: Colors.white),
                             style: IconButton.styleFrom(
-                              backgroundColor: Colors.black.withValues(alpha: 0.3),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              backgroundColor:
+                                  Colors.black.withValues(alpha: 0.3),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
                             ),
                           ),
                           const SizedBox(width: 12),
                           TextButton(
                             onPressed: () => context.go(AuthRouter.login),
                             style: TextButton.styleFrom(
-                              backgroundColor: Colors.black.withValues(alpha: 0.3),
+                              backgroundColor:
+                                  Colors.black.withValues(alpha: 0.3),
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
                             ),
                             child: const Text('Sign In'),
                           ),
@@ -82,7 +89,8 @@ class _SignupViewState extends State<SignupView> {
                       children: [
                         Text(
                           'Sign Up',
-                          style: AppTypography.h3.copyWith(color: AppColors.primary, fontSize: 24),
+                          style: AppTypography.h3
+                              .copyWith(color: AppColors.primary, fontSize: 24),
                         ),
                         const SizedBox(height: 16),
                         const _DashedDivider(),
@@ -90,17 +98,22 @@ class _SignupViewState extends State<SignupView> {
                         // Form
                         Row(
                           children: [
-                            Expanded(child: _buildTextField('Enter your first name')),
+                            Expanded(
+                                child:
+                                    _buildTextField('Enter your first name')),
                             const SizedBox(width: 16),
-                            Expanded(child: _buildTextField('Enter your last name')),
+                            Expanded(
+                                child: _buildTextField('Enter your last name')),
                           ],
                         ),
                         const SizedBox(height: 16),
                         Row(
                           children: [
-                            Expanded(child: _buildTextField('Enter your username')),
+                            Expanded(
+                                child: _buildTextField('Enter your username')),
                             const SizedBox(width: 16),
-                            Expanded(child: _buildTextField('Enter email address')),
+                            Expanded(
+                                child: _buildTextField('Enter email address')),
                           ],
                         ),
                         const SizedBox(height: 16),
@@ -112,11 +125,14 @@ class _SignupViewState extends State<SignupView> {
                                 obscureText: _obscurePassword,
                                 suffixIcon: IconButton(
                                   icon: Icon(
-                                    _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                                    _obscurePassword
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
                                     size: 20,
                                     color: AppColors.textHint,
                                   ),
-                                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                                  onPressed: () => setState(() =>
+                                      _obscurePassword = !_obscurePassword),
                                 ),
                               ),
                             ),
@@ -127,11 +143,15 @@ class _SignupViewState extends State<SignupView> {
                                 obscureText: _obscureConfirmPassword,
                                 suffixIcon: IconButton(
                                   icon: Icon(
-                                    _obscureConfirmPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                                    _obscureConfirmPassword
+                                        ? Icons.visibility_off_outlined
+                                        : Icons.visibility_outlined,
                                     size: 20,
                                     color: AppColors.textHint,
                                   ),
-                                  onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                                  onPressed: () => setState(() =>
+                                      _obscureConfirmPassword =
+                                          !_obscureConfirmPassword),
                                 ),
                               ),
                             ),
@@ -152,12 +172,16 @@ class _SignupViewState extends State<SignupView> {
                         RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            style: AppTypography.label.copyWith(fontSize: 12, color: AppColors.textSecondary),
+                            style: AppTypography.label.copyWith(
+                                fontSize: 12, color: AppColors.textSecondary),
                             children: [
-                              const TextSpan(text: 'By signing up, you agree to our '),
+                              const TextSpan(
+                                  text: 'By signing up, you agree to our '),
                               TextSpan(
                                 text: 'Privacy Policy and Terms of service',
-                                style: TextStyle(color: AppColors.primary.withValues(alpha: 0.8)),
+                                style: TextStyle(
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.8)),
                               ),
                             ],
                           ),
@@ -197,7 +221,8 @@ class _SignupViewState extends State<SignupView> {
     );
   }
 
-  Widget _buildTextField(String hint, {bool obscureText = false, Widget? suffixIcon}) {
+  Widget _buildTextField(String hint,
+      {bool obscureText = false, Widget? suffixIcon}) {
     return TextField(
       obscureText: obscureText,
       style: AppTypography.bodyMedium.copyWith(color: Colors.white),
@@ -228,7 +253,7 @@ class _SignupBackgroundPainter extends CustomPainter {
         colors: [
           Color(0xFF0F172A),
           Color(0xFF1E3A8A),
-           Color(0xFF111827),
+          Color(0xFF111827),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
@@ -236,16 +261,19 @@ class _SignupBackgroundPainter extends CustomPainter {
     path.moveTo(0, 0);
     path.lineTo(size.width, 0);
     path.lineTo(size.width, size.height * 0.7);
-    path.quadraticBezierTo(size.width * 0.5, size.height * 0.9, 0, size.height * 0.6);
+    path.quadraticBezierTo(
+        size.width * 0.5, size.height * 0.9, 0, size.height * 0.6);
     path.close();
 
     canvas.drawPath(path, paint);
-    
+
     // Additional decorative curve
-    final paint2 = Paint()..color = const Color(0xFF3B82F6).withValues(alpha: 0.05);
+    final paint2 = Paint()
+      ..color = const Color(0xFF3B82F6).withValues(alpha: 0.05);
     final path2 = Path();
     path2.moveTo(size.width, size.height * 0.2);
-    path2.quadraticBezierTo(size.width * 0.6, size.height * 0.5, size.width, size.height * 0.8);
+    path2.quadraticBezierTo(
+        size.width * 0.6, size.height * 0.5, size.width, size.height * 0.8);
     canvas.drawPath(path2, paint2);
   }
 
